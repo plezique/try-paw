@@ -1044,7 +1044,7 @@ async function updatePet(id, petData) {
 // Delete a pet in backend
 async function deletePet(id) {
     // Use the correct backend API endpoint
-    const res = await fetch(`http://localhost:3000/api/pets/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/pets/${id}`, { method: 'DELETE' });
     return await res.json();
 }
 
@@ -1056,7 +1056,7 @@ async function renderMyPets() {
     // Fetch from backend instead of localStorage
     try {
         const userId = localStorage.getItem('userId');
-        const res = await fetch(`http://localhost:3000/api/pets?userId=${userId}`);
+        const res = await fetch(`/api/pets?userId=${userId}`);
         const pets = await res.json();
         const userPets = pets.filter(pet => pet.userId === userId);
 
@@ -1164,7 +1164,7 @@ async function handleAddPet(e) {
         };
         
         // Send to backend
-        const response = await fetch('http://localhost:3000/api/pets', {
+        const response = await fetch('/api/pets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(petData)
@@ -1189,7 +1189,7 @@ async function handleAddPet(e) {
 async function handleDeletePet(id) {
     if (confirm('Are you sure you want to delete this pet?')) {
         try {
-            const response = await fetch(`http://localhost:3000/api/pets/${id}`, { method: 'DELETE' });
+            const response = await fetch(`/api/pets/${id}`, { method: 'DELETE' });
             if (!response.ok) {
                 let errorMsg = 'Failed to delete pet.';
                 try {
@@ -1228,7 +1228,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Add/Edit Pet Modal
 let editPetModal = null;
 function showEditPetForm(id) {
-    fetch(`http://localhost:3000/api/pets/${id}`)
+    fetch(`/api/pets/${id}`)
         .then(res => res.json())
         .then(pet => {
             // Parse age as number for the input
