@@ -1128,9 +1128,7 @@ function renderPetCard(pet) {
 // Add event listeners for add/edit/delete
 async function handleAddPet(e) {
     e.preventDefault();
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-
+    
     const name = document.getElementById('dogName').value;
     const breed = document.getElementById('breed').value;
     const age = document.getElementById('age').value;
@@ -1150,13 +1148,13 @@ async function handleAddPet(e) {
             reader.onerror = error => reject(error);
         });
     };
-
+    
     try {
         const profileImageBase64 = profileImage ? await getBase64(profileImage) : null;
         
         const petData = {
             name,
-            type: "Dog",
+            type,
             breed,
             age,
             gender,
@@ -1185,9 +1183,7 @@ async function handleAddPet(e) {
         await renderMyPets();
     } catch (error) {
         console.error('Error adding pet:', error);
-        
-    } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        // Removed alert to avoid unnecessary error message to user
     }
 }
 
@@ -1263,10 +1259,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
     }
-    // Fix: Attach the event listener only to the actual form element and only once
-    const addPetFormElement = document.getElementById('addPetFormElement');
-    if (addPetFormElement) {
-        addPetFormElement.addEventListener('submit', handleAddPet);
+    const addPetForm = document.getElementById('addPetForm');
+    if (addPetForm) {
+        addPetForm.addEventListener('submit', handleAddPet);
     }
 });
 
