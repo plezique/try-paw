@@ -880,7 +880,7 @@
 
             // Fetch pets from backend
             try {
-                const response = await fetch('http://localhost:3000/api/pets');
+                const response = await fetch(`/api/pets/${id}`);
                 pets = await response.json();
                 if (!Array.isArray(pets)) throw new Error('Invalid data');
 
