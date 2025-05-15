@@ -1256,11 +1256,16 @@ window.addEventListener('DOMContentLoaded', async () => {
                 `;
                 petGrid.appendChild(card);
             });
+    
+            // Add click event listeners to each pet image to update the modal with the correct pet data
+            document.querySelectorAll('.pet-image').forEach(img => {
+                img.addEventListener('click', function() {
+                    const petId = this.getAttribute('data-pet-id');
+                    const pet = pets.find(p => String(p._id) === String(petId));
+                    if (pet) updatePetModal(pet);
+                });
+            });
         }
-    }
-    const addPetForm = document.getElementById('addPetForm');
-    if (addPetForm) {
-        addPetForm.addEventListener('submit', handleAddPet);
     }
 });
 
