@@ -1263,9 +1263,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
     }
-    const addPetForm = document.getElementById('addPetForm');
-    if (addPetForm) {
-        addPetForm.addEventListener('submit', handleAddPet);
+    // Fix: Attach the event listener only to the actual form element and only once
+    const addPetFormElement = document.getElementById('addPetFormElement');
+    if (addPetFormElement) {
+        addPetFormElement.addEventListener('submit', handleAddPet);
     }
 });
 
