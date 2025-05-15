@@ -233,31 +233,38 @@ function initializeSearchAndFilter() {
 
 // Update the pet modal with pet data
 function updatePetModal(pet) {
-    // Set the modal title
-    const modalTitle = document.querySelector('#petModal .modal-title');
-    if (modalTitle) modalTitle.textContent = pet.name;
+    window.currentPet = pet;
+    selectedPetId = pet.id || pet._id;
+    const mainImage = document.querySelector('.main-pet-image');
+    if (mainImage) mainImage.src = pet.images[0];
 
-    // Set the main image
-    const mainImage = document.querySelector('#petModal .main-pet-image');
-    if (mainImage) mainImage.src = pet.profileImage || (pet.images && pet.images[0]) || 'images/default-pet.jpg';
+    const thumbnails = document.querySelectorAll('.pet-thumbnail');
+    pet.images.forEach((img, index) => {
+        if (thumbnails[index]) {
+            thumbnails[index].src = img;
+        }
+    });
 
-    // Set breed, age, gender, location, description
-    const breedSpan = document.querySelector('#petModal .pet-breed span');
-    if (breedSpan) breedSpan.textContent = pet.breed || '';
+    const elements = {
+        name: document.querySelector('.pet-name'),
+        type: document.querySelector('.pet-type'),
+        age: document.querySelector('.pet-age'),
+        gender: document.querySelector('.pet-gender'),
+        location: document.querySelector('.pet-location'),
+        description: document.querySelector('.pet-description')
+    };
 
-    const ageSpan = document.querySelector('#petModal .pet-age span');
-    if (ageSpan) ageSpan.textContent = pet.age || '';
+    if (elements.name) elements.name.textContent = pet.name;
+    if (elements.type) elements.type.innerHTML = `<i class="fas fa-dog me-2"></i>${pet.breed}`;
+    if (elements.age) elements.age.innerHTML = `<i class="fas fa-birthday-cake me-2"></i>${pet.age}`;
+    if (elements.gender) {
+        const genderSpan = elements.gender.querySelector('span');
+         if (genderSpan) genderSpan.textContent = pet.gender;
+    }
+    if (elements.location) elements.location.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${pet.location}`;
+    if (elements.description) elements.description.textContent = pet.description;
 
-    const genderSpan = document.querySelector('#petModal .pet-gender span');
-    if (genderSpan) genderSpan.textContent = pet.gender || '';
-
-    const locationSpan = document.querySelector('#petModal .pet-location span');
-    if (locationSpan) locationSpan.textContent = pet.location || '';
-
-    const descriptionP = document.querySelector('#petModal .pet-description');
-    if (descriptionP) descriptionP.textContent = pet.description || '';
-
-    const actionButtons = document.querySelector('#petModal .modal-footer');
+    const actionButtons = document.querySelector('.modal-footer');
     if (!actionButtons) return;
 
     if (!isLoggedIn) {
@@ -290,7 +297,7 @@ function updatePetModal(pet) {
     }
 
     // Update favorite button state and handler
-    const favoriteBtn = document.querySelector('#petModal .favorite-btn');
+    const favoriteBtn = document.querySelector('.favorite-btn');
     if (favoriteBtn) {
         favoriteBtn.onclick = function() { window.toggleFavorite(window.currentPet._id || window.currentPet.id); };
     }
@@ -1249,16 +1256,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 `;
                 petGrid.appendChild(card);
             });
-    
-            // Add click event listeners to each pet image to update the modal with the correct pet data
-            document.querySelectorAll('.pet-image').forEach(img => {
-                img.addEventListener('click', function() {
-                    const petId = this.getAttribute('data-pet-id');
-                    const pet = pets.find(p => String(p._id) === String(petId));
-                    if (pet) updatePetModal(pet);
-                });
-            });
         }
+    }
+    const addPetForm = document.getElementById('addPetForm');
+    if (addPetForm) {
+        addPetForm.addEventListener('submit', handleAddPet);
     }
 });
 
