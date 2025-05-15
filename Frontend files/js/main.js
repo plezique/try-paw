@@ -1154,6 +1154,7 @@ async function handleAddPet(e) {
         
         const petData = {
             name,
+            type: "Dog",
             breed,
             age,
             gender,
