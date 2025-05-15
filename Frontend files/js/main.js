@@ -1128,7 +1128,9 @@ function renderPetCard(pet) {
 // Add event listeners for add/edit/delete
 async function handleAddPet(e) {
     e.preventDefault();
-    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
     const name = document.getElementById('dogName').value;
     const breed = document.getElementById('breed').value;
     const age = document.getElementById('age').value;
@@ -1148,7 +1150,7 @@ async function handleAddPet(e) {
             reader.onerror = error => reject(error);
         });
     };
-    
+
     try {
         const profileImageBase64 = profileImage ? await getBase64(profileImage) : null;
         
@@ -1183,7 +1185,9 @@ async function handleAddPet(e) {
         await renderMyPets();
     } catch (error) {
         console.error('Error adding pet:', error);
-        // Removed alert to avoid unnecessary error message to user
+        
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
     }
 }
 
