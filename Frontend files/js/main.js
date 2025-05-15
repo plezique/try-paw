@@ -151,8 +151,34 @@ if (loginForm) {
 
 // Initialize pet modal functionality
 function initializePetModal() {
-    // This function should be refactored to fetch pet data from the backend or use the data already loaded on the page.
-    // Remove or comment out any code that references a global pets array.
+    // Wait for the DOM and pet cards to be rendered
+    setTimeout(() => {
+        const petImages = document.querySelectorAll('.pet-image');
+        petImages.forEach(img => {
+            img.addEventListener('click', function() {
+                const petId = this.getAttribute('data-pet-id');
+                // Find the pet data from the global pets array or fetch it if needed
+                let pet = null;
+                if (typeof pets !== 'undefined') {
+                    pet = pets.find(p => String(p._id || p.id) === String(petId));
+                }
+                if (pet) {
+                    updatePetModal({
+                        id: pet._id || pet.id,
+                        name: pet.name,
+                        breed: pet.breed,
+                        age: pet.age,
+                        gender: pet.gender,
+                        location: pet.location,
+                        description: pet.description,
+                        images: [pet.profileImage || (pet.images && pet.images[0]) || 'images/default-pet.jpg']
+                    });
+                    const petModal = new bootstrap.Modal(document.getElementById('petModal'));
+                    petModal.show();
+                }
+            });
+        });
+    }, 500); // Delay to ensure cards are rendered
 }
 
 // Initialize search and filter functionality
