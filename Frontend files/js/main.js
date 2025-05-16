@@ -1,6 +1,9 @@
 // Authentication state
 let isLoggedIn = false;
 
+// --- GLOBAL PETS VARIABLE ---
+let pets = [];
+
 // Update UI based on authentication status
 function updateAuthUI(isLoggedIn) {
     const loginLinks = document.querySelectorAll('a[href="login.html"]');
@@ -90,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentPage === 'browse.html') {
         initializePetModal();
         initializeSearchAndFilter();
+        loadAndRenderBrowsePets();
     }
 
     // Add authentication check for protected pages
@@ -1490,17 +1494,31 @@ window.showMatchRequests = async function() {
     } catch (e) {}
 };
 
-// Render each pet as a card
-if (pets.length === 0) {
-    petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-muted'>No pets found.</p></div>`;
-} else {
+// --- FETCH AND RENDER PETS FOR BROWSE PAGE ---
+async function loadAndRenderBrowsePets() {
+    const petGrid = document.querySelector('.pet-cards-grid');
+    if (!petGrid) return;
+    try {
+        const res = await fetch('/api/pets');
+        pets = await res.json();
+        renderBrowsePets(pets);
+    } catch (e) {
+        petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-danger'>Failed to load pets.</p></div>`;
+    }
+}
+
+function renderBrowsePets(pets) {
+    const petGrid = document.querySelector('.pet-cards-grid');
+    if (!petGrid) return;
+    if (!pets || pets.length === 0) {
+        petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-muted'>No pets found.</p></div>`;
+        return;
+    }
     petGrid.innerHTML = '';
-    // Fun badge phrases
     const funBadges = ['Adopt Me!', 'Woof!', 'New Friend!', 'So Cute!', 'Let\'s Play!', 'Pick Me!', 'Best Buddy!', 'Cuddle Me!'];
     pets.forEach((pet, idx) => {
         const card = document.createElement('div');
         card.className = 'col';
-        // Pick a random badge
         const badgeText = funBadges[Math.floor(Math.random() * funBadges.length)];
         card.innerHTML = `
             <div class="card h-100 position-relative">
