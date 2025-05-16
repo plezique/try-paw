@@ -1,9 +1,6 @@
 // Authentication state
 let isLoggedIn = false;
 
-// --- GLOBAL PETS VARIABLE ---
-let pets = [];
-
 // Update UI based on authentication status
 function updateAuthUI(isLoggedIn) {
     const loginLinks = document.querySelectorAll('a[href="login.html"]');
@@ -1523,7 +1520,7 @@ function renderBrowsePets(pets) {
         card.innerHTML = `
             <div class="card h-100 position-relative">
                 <span class="fun-badge">${badgeText}</span>
-                <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-bs-toggle="modal" data-bs-target="#petModal" data-pet-id="${pet._id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
+                <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-bs-toggle="modal" data-bs-target="#petModal" data-pet-id="${pet._id || pet.id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
                 <div class="card-body">
                     <h5 class="card-title">${pet.name}</h5>
                     <p class="card-text">
@@ -1537,5 +1534,20 @@ function renderBrowsePets(pets) {
             </div>
         `;
         petGrid.appendChild(card);
+    });
+    // Add event listeners to each pet image to open modal with correct details
+    const petImages = petGrid.querySelectorAll('.pet-image');
+    petImages.forEach(img => {
+        img.addEventListener('click', function(e) {
+            const petId = this.getAttribute('data-pet-id');
+            const pet = pets.find(p => String(p._id || p.id) === String(petId));
+            if (pet) {
+                // Ensure images array for modal
+                if (!pet.images || !Array.isArray(pet.images) || pet.images.length === 0) {
+                    pet.images = [pet.profileImage || 'images/default-pet.jpg'];
+                }
+                updatePetModal(pet);
+            }
+        });
     });
 }
