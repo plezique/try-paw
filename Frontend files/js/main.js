@@ -236,28 +236,34 @@ function updatePetModal(pet) {
     window.currentPet = pet;
     selectedPetId = pet.id || pet._id;
     const mainImage = document.querySelector('.main-pet-image');
-    if (mainImage) mainImage.src = pet.profileImage || (pet.images && pet.images[0]) || 'images/default-pet.jpg';
+    if (mainImage) mainImage.src = pet.images[0];
 
-    // Update modal fields using <span> elements as per modal HTML
-    const breedSpan = document.querySelector('.pet-breed span');
-    if (breedSpan) breedSpan.textContent = pet.breed || '';
+    const thumbnails = document.querySelectorAll('.pet-thumbnail');
+    pet.images.forEach((img, index) => {
+        if (thumbnails[index]) {
+            thumbnails[index].src = img;
+        }
+    });
 
-    const ageSpan = document.querySelector('.pet-age span');
-    if (ageSpan) ageSpan.textContent = pet.age || '';
+    const elements = {
+        name: document.querySelector('.pet-name'),
+        type: document.querySelector('.pet-type'),
+        age: document.querySelector('.pet-age'),
+        gender: document.querySelector('.pet-gender'),
+        location: document.querySelector('.pet-location'),
+        description: document.querySelector('.pet-description')
+    };
 
-    const genderSpan = document.querySelector('.pet-gender span');
-    if (genderSpan) genderSpan.textContent = pet.gender || '';
+    if (elements.name) elements.name.textContent = pet.name;
+    if (elements.type) elements.type.innerHTML = `<i class="fas fa-dog me-2"></i>${pet.breed}`;
+    if (elements.age) elements.age.innerHTML = `<i class="fas fa-birthday-cake me-2"></i>${pet.age}`;
+    if (elements.gender) {
+        const genderSpan = elements.gender.querySelector('span');
+         if (genderSpan) genderSpan.textContent = pet.gender;
+    }
+    if (elements.location) elements.location.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${pet.location}`;
+    if (elements.description) elements.description.textContent = pet.description;
 
-    const locationSpan = document.querySelector('.pet-location span');
-    if (locationSpan) locationSpan.textContent = pet.location || '';
-
-    const descriptionP = document.querySelector('.pet-description');
-    if (descriptionP) descriptionP.textContent = pet.description || '';
-
-    const modalTitle = document.querySelector('#petModal .modal-title');
-    if (modalTitle) modalTitle.textContent = pet.name;
-
-    // Action buttons (leave as is)
     const actionButtons = document.querySelector('.modal-footer');
     if (!actionButtons) return;
 
@@ -281,10 +287,10 @@ function updatePetModal(pet) {
     } else {
         actionButtons.innerHTML = `
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn" style="background-color: #012312; color: white;" onclick="sendMatchRequest(${pet.id || pet._id})">
+            <button type="button" class="btn" style="background-color: #012312; color: white;" onclick="sendMatchRequest(${pet.id})">
                 <i class="fas fa-heart me-2"></i>Send Match Request
             </button>
-            <button type="button" class="btn" style="background-color: #FFB031; color: #012312;" onclick="favoritePet(${pet.id || pet._id})">
+            <button type="button" class="btn" style="background-color: #FFB031; color: #012312;" onclick="favoritePet(${pet.id})">
                 <i class="fas fa-star me-2"></i>Favorite
             </button>
         `;
@@ -1213,46 +1219,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (currentPage === 'my-pets.html') {
         renderMyPets();
     }
-    if (currentPage === 'browse.html') {
-        // Fetch and render all pets for browse page
-        const petGrid = document.getElementById('petGrid');
-        let pets = [];
-        try {
-            const res = await fetch('/api/pets');
-            pets = await res.json();
-        } catch (e) {
-            pets = [];
-        }
-        if (!petGrid) return;
-        if (pets.length === 0) {
-            petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-muted'>No pets found.</p></div>`;
-        } else {
-            petGrid.innerHTML = '';
-            const funBadges = ['Adopt Me!', 'Woof!', 'New Friend!', 'So Cute!', 'Let\'s Play!', 'Pick Me!', 'Best Buddy!', 'Cuddle Me!'];
-            pets.forEach((pet, idx) => {
-                const card = document.createElement('div');
-                card.className = 'col';
-                const badgeText = funBadges[Math.floor(Math.random() * funBadges.length)];
-                card.innerHTML = `
-                    <div class="card h-100 position-relative">
-                        <span class="fun-badge">${badgeText}</span>
-                        <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-bs-toggle="modal" data-bs-target="#petModal" data-pet-id="${pet._id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
-                        <div class="card-body">
-                            <h5 class="card-title">${pet.name}</h5>
-                            <p class="card-text">
-                                <strong>Breed:</strong> ${pet.breed}<br>
-                                <strong>Age:</strong> ${pet.age}<br>
-                                <strong>Gender:</strong> ${pet.gender}<br>
-                                <strong>Location:</strong> ${pet.location}
-                            </p>
-                            <p class="card-text">${pet.description}</p>
-                        </div>
-                    </div>
-                `;
-                petGrid.appendChild(card);
-            });
-        }
-    }
     const addPetForm = document.getElementById('addPetForm');
     if (addPetForm) {
         addPetForm.addEventListener('submit', handleAddPet);
@@ -1523,3 +1489,35 @@ window.showMatchRequests = async function() {
         await updateSentMatchRequestStatusNotification();
     } catch (e) {}
 };
+
+// Render each pet as a card
+if (pets.length === 0) {
+    petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-muted'>No pets found.</p></div>`;
+} else {
+    petGrid.innerHTML = '';
+    // Fun badge phrases
+    const funBadges = ['Adopt Me!', 'Woof!', 'New Friend!', 'So Cute!', 'Let\'s Play!', 'Pick Me!', 'Best Buddy!', 'Cuddle Me!'];
+    pets.forEach((pet, idx) => {
+        const card = document.createElement('div');
+        card.className = 'col';
+        // Pick a random badge
+        const badgeText = funBadges[Math.floor(Math.random() * funBadges.length)];
+        card.innerHTML = `
+            <div class="card h-100 position-relative">
+                <span class="fun-badge">${badgeText}</span>
+                <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-bs-toggle="modal" data-bs-target="#petModal" data-pet-id="${pet._id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
+                <div class="card-body">
+                    <h5 class="card-title">${pet.name}</h5>
+                    <p class="card-text">
+                        <strong>Breed:</strong> ${pet.breed}<br>
+                        <strong>Age:</strong> ${pet.age}<br>
+                        <strong>Gender:</strong> ${pet.gender}<br>
+                        <strong>Location:</strong> ${pet.location}
+                    </p>
+                    <p class="card-text">${pet.description}</p>
+                </div>
+            </div>
+        `;
+        petGrid.appendChild(card);
+    });
+}
