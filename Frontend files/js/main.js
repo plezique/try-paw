@@ -235,7 +235,7 @@ function initializeSearchAndFilter() {
 // Update the pet modal with pet data
 function updatePetModal(pet) {
     window.currentPet = pet;
-    selectedPetId = pet.id || pet._id;
+    selectedPetId = String(pet._id || pet.id);
     const mainImage = document.querySelector('.main-pet-image');
     if (mainImage) mainImage.src = pet.images[0];
 
@@ -300,7 +300,7 @@ function updatePetModal(pet) {
     // Update favorite button state and handler
     const favoriteBtn = document.querySelector('.favorite-btn');
     if (favoriteBtn) {
-        favoriteBtn.onclick = function() { window.toggleFavorite(window.currentPet._id || window.currentPet.id); };
+        favoriteBtn.onclick = function() { window.toggleFavorite(String(window.currentPet._id || window.currentPet.id)); };
     }
 }
 
@@ -556,14 +556,14 @@ async function toggleFavorite(petId) {
     }
     const userId = localStorage.getItem('userId');
     let favorites = await fetchFavoritesFromBackend();
-    // Always use _id for pet
-    const pet = pets.find(p => (p._id || p.id) === petId || (p.id || p._id) === petId);
+    // Always use string for comparison
+    const pet = pets.find(p => String(p._id || p.id) === String(petId));
     if (!pet) {
         console.error('Pet not found in pets array for petId:', petId);
         return;
     }
     const petObjectId = pet._id || pet.id;
-    const isFavorite = favorites.some(fav => (fav.id || fav._id) === petObjectId);
+    const isFavorite = favorites.some(fav => String(fav.id || fav._id) === String(petObjectId));
     if (isFavorite) {
         // Remove from backend (use query params)
         try {
@@ -611,7 +611,7 @@ async function toggleFavorite(petId) {
     localStorage.setItem('favorites', JSON.stringify(favorites));
     const btn = document.querySelector('.favorite-btn');
     const icon = btn.querySelector('i');
-    const nowFavorite = favorites.some(fav => (fav.id || fav._id) === petObjectId);
+    const nowFavorite = favorites.some(fav => String(fav.id || fav._id) === String(petObjectId));
     if (!nowFavorite) {
         icon.classList.remove('fas');
         icon.classList.add('far');
