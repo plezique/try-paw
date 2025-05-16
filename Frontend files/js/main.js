@@ -1520,7 +1520,7 @@ function renderBrowsePets(pets) {
         card.innerHTML = `
             <div class="card h-100 position-relative">
                 <span class="fun-badge">${badgeText}</span>
-                <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-bs-toggle="modal" data-bs-target="#petModal" data-pet-id="${pet._id || pet.id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
+                <img src="${pet.profileImage || 'images/default-pet.jpg'}" class="card-img-top pet-image" alt="${pet.name}" data-pet-id="${pet._id || pet.id}" onerror="this.onerror=null;this.src='images/default-pet.jpg';">
                 <div class="card-body">
                     <h5 class="card-title">${pet.name}</h5>
                     <p class="card-text">
@@ -1547,6 +1547,9 @@ function renderBrowsePets(pets) {
                     pet.images = [pet.profileImage || 'images/default-pet.jpg'];
                 }
                 updatePetModal(pet);
+                // Show the modal programmatically
+            const petModal = new bootstrap.Modal(document.getElementById('petModal'));
+            petModal.show();
             }
         });
     });
