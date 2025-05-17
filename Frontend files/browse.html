@@ -838,16 +838,15 @@
 
             // Fetch pets from backend
             try {
-                const response = await fetch(`/api/pets/${id}`);
+                const response = await fetch('/api/pets');
                 pets = await response.json();
                 window.pets = pets; // Ensure global pets is always up to date
                 if (!Array.isArray(pets)) throw new Error('Invalid data');
-
-                // Exclude current user's pets
                 const userId = localStorage.getItem('userId');
                 if (userId) {
                     pets = pets.filter(pet => pet.userId !== userId);
                 }
+                
 
                 // Render each pet as a card
                 if (pets.length === 0) {
