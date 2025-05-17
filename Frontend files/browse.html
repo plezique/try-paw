@@ -599,54 +599,12 @@
 
             petImages.forEach(img => {
                 img.addEventListener('click', function() {
-                    const petId = parseInt(this.dataset.petId);
-                    const card = this.closest('.card');
-                    
-                    // Get pet data from the card
-                    const name = card.querySelector('.card-title').textContent.trim();
-                    
-                    // Get breed and age
-                    const breedAgeContainer = card.querySelector('.card-text');
-                    let breed = '';
-                    let age = '';
-                    if (breedAgeContainer) {
-                        const text = breedAgeContainer.textContent;
-                        // First, find and remove the icon text
-                        const cleanText = text.replace(/.*dog me-2">/, '').trim();
-                        // The breed is everything before the first number
-                        breed = cleanText.replace(/\s+\d+.*$/, '').trim();
-                        // Get the age
-                        const ageMatch = text.match(/\d+\s*years?/);
-                        age = ageMatch ? ageMatch[0] : '';
+                    const petId = this.dataset.petId || this.getAttribute('data-pet-id');
+                    const pet = window.pets.find(p => String(p._id) === String(petId));
+                    if (pet) {
+                        updatePetModal(pet);
+                        modal.show();
                     }
-                    
-                    // Get location
-                    const locationContainer = card.querySelector('.card-text:nth-child(3)');
-                    let location = '';
-                    if (locationContainer) {
-                        const text = locationContainer.textContent;
-                        location = text.replace(/.*marker-alt me-2">/, '').trim();
-                    }
-                    
-                    // Get description (last card-text)
-                    const description = card.querySelector('.card-text:last-child').textContent.trim();
-                    
-                    // Get the main image
-                    const mainImage = this.src;
-
-                    const pet = {
-                        id: petId,
-                        name: name,
-                        breed: breed,
-                        age: age,
-                        location: location,
-                        description: description,
-                        images: [mainImage]
-                    };
-
-                    console.log('Pet details:', pet); // Add this for debugging
-                    updatePetModal(pet);
-                    modal.show();
                 });
             });
 
@@ -812,7 +770,7 @@
         }
 
         function updatePetModal(pet) {
-            selectedPetId = pet.id;
+            selectedPetId = pet._id;
             const modal = document.getElementById('petModal');
             
             // Update modal content
