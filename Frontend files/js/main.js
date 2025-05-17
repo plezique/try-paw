@@ -299,7 +299,7 @@ function updatePetModal(pet) {
     }
 
     // Update favorite button state and handler
-    const favoriteBtn = document.querySelector('.favorite-btn');
+    const favoriteBtn = actionButtons.querySelector('.favorite-btn');
     if (favoriteBtn) {
          const petId = favoriteBtn.getAttribute('data-pet-id');
             favoriteBtn.onclick = function() { window.toggleFavorite(petId); };
@@ -551,7 +551,7 @@ if (localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('userI
 }
 
 async function toggleFavorite(petId) {
-    console.log('toggleFavorite called with petId:', petId, 'pets:', pets);
+    console.log('toggleFavorite called with petId:', petId, 'window.pets:', window.pets);
     if (!isLoggedIn) {
         window.location.href = 'login.html';
         return;
@@ -559,9 +559,9 @@ async function toggleFavorite(petId) {
     const userId = localStorage.getItem('userId');
     let favorites = await fetchFavoritesFromBackend();
     // Always use string for comparison
-    const pet = pets.find(p => String(p._id || p.id) === String(petId));
+    const pet = window.pets.find(p => String(p._id || p.id) === String(petId));
     if (!pet) {
-        console.error('Pet not found in pets array for petId:', petId);
+        console.error('Pet not found in pets array for petId:', petId, 'window.pets:', window.pets);
         return;
     }
     const petObjectId = pet._id || pet.id;
@@ -1499,8 +1499,8 @@ async function loadAndRenderBrowsePets() {
     if (!petGrid) return;
     try {
         const res = await fetch('/api/pets');
-        pets = await res.json();
-        renderBrowsePets(pets);
+        window.pets = await res.json(); // Ensure pets is always global
+        renderBrowsePets(window.pets);
     } catch (e) {
         petGrid.innerHTML = `<div class='col-12 text-center'><p class='text-danger'>Failed to load pets.</p></div>`;
     }
@@ -1542,7 +1542,9 @@ function renderBrowsePets(pets) {
     petImages.forEach(img => {
         img.addEventListener('click', function(e) {
             const petId = this.getAttribute('data-pet-id');
-            const pet = pets.find(p => String(p._id || p.id) === String(petId));
+            // Only open modal if pets are loaded
+            if (!window.pets || !Array.isArray(window.pets) || window.pets.length === 0) return;
+            const pet = window.pets.find(p => String(p._id || p.id) === String(petId));
             if (pet) {
                 if (!pet.images || !Array.isArray(pet.images) || pet.images.length === 0) {
                     pet.images = [pet.profileImage || 'images/default-pet.jpg'];
