@@ -291,8 +291,9 @@ function updatePetModal(pet) {
             <button type="button" class="btn" style="background-color: #012312; color: white;" onclick="sendMatchRequest(${pet.id})">
                 <i class="fas fa-heart me-2"></i>Send Match Request
             </button>
-            <button type="button" class="btn" style="background-color: #FFB031; color: #012312;" onclick="favoritePet(${pet.id})">
-                <i class="fas fa-star me-2"></i>Favorite
+            
+            <button type="button" class="btn favorite-btn" data-pet-id="${pet._id || pet.id}" style="background-color: #FFB031; color: #012312;">
+                <i class="fas fa-star me-2"></i>Add to Favorites
             </button>
         `;
     }
@@ -300,7 +301,8 @@ function updatePetModal(pet) {
     // Update favorite button state and handler
     const favoriteBtn = document.querySelector('.favorite-btn');
     if (favoriteBtn) {
-        favoriteBtn.onclick = function() { window.toggleFavorite(String(window.currentPet._id || window.currentPet.id)); };
+         const petId = favoriteBtn.getAttribute('data-pet-id');
+            favoriteBtn.onclick = function() { window.toggleFavorite(petId); };
     }
 }
 
