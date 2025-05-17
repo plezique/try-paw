@@ -301,7 +301,10 @@ function updatePetModal(pet) {
     const favoriteBtn = actionButtons.querySelector('.favorite-btn');
     if (favoriteBtn) {
         const petId = favoriteBtn.getAttribute('data-pet-id');
-        favoriteBtn.onclick = function() { window.toggleFavorite(petId); };
+        favoriteBtn.onclick = function() { 
+            const id = this.getAttribute('data-pet-id');
+            window.toggleFavorite(id); 
+        };
     }
 }
 
