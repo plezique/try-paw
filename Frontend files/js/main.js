@@ -288,10 +288,10 @@ function updatePetModal(pet) {
     } else {
         actionButtons.innerHTML = `
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn" style="background-color: #012312; color: white;" onclick="sendMatchRequest('${pet.id}')">
+            <button type="button" class="btn" style="background-color: #012312; color: white;" onclick="sendMatchRequest('${pet._id}')">
                 <i class="fas fa-heart me-2"></i>Send Match Request
             </button>
-            <button type="button" class="btn favorite-btn" data-pet-id="${pet.id}" style="background-color: #FFB031; color: #012312;">
+            <button type="button" class="btn favorite-btn" data-pet-id="${pet._id}" style="background-color: #FFB031; color: #012312;">
                 <i class="fas fa-star me-2"></i>Add to Favorites
             </button>
         `;
@@ -558,7 +558,7 @@ async function toggleFavorite(petId) {
     const userId = localStorage.getItem('userId');
     let favorites = await fetchFavoritesFromBackend();
     // Always use string for comparison
-    const pet = window.pets.find(p => String(p._id || p.id) === String(petId));
+    const pet = window.pets.find(p => String(p._id) === String(petId));
     if (!pet) {
         console.error('Pet not found in pets array for petId:', petId, 'window.pets:', window.pets);
         return;
