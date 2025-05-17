@@ -1542,14 +1542,13 @@ function renderBrowsePets(pets) {
             const petId = this.getAttribute('data-pet-id');
             const pet = pets.find(p => String(p._id || p.id) === String(petId));
             if (pet) {
-                // Ensure images array for modal
                 if (!pet.images || !Array.isArray(pet.images) || pet.images.length === 0) {
                     pet.images = [pet.profileImage || 'images/default-pet.jpg'];
                 }
                 updatePetModal(pet);
                 // Show the modal programmatically
-            const petModal = new bootstrap.Modal(document.getElementById('petModal'));
-            petModal.show();
+                const petModal = new bootstrap.Modal(document.getElementById('petModal'));
+                petModal.show();
             }
         });
     });
