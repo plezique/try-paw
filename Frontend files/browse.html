@@ -882,6 +882,7 @@
             try {
                 const response = await fetch(`/api/pets/${id}`);
                 pets = await response.json();
+                window.pets = pets; // Ensure global pets is always up to date
                 if (!Array.isArray(pets)) throw new Error('Invalid data');
 
                 // Exclude current user's pets
